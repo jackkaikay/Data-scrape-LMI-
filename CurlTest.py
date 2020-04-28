@@ -213,30 +213,56 @@ RepDemRCU_sYear = []
 RepDemRCU_eYear = []
 RepDemRCU_employment = []
 
-def RepDemRCU():
+
+
+#-------- 2017-2027 / 2027 - 2022  /  2022 - 2027 -------------
+def RepDemRCU3Band():
+    #2017 - 2022
     for x in range(len(socCodeRead)):
         x = socCodeRead.loc[x, 'SOC_CODE']
-        print('http://api.lmiforall.org.uk/api/v1/wf/replacement_demand?soc=' + str(x))
-        res = requests.get('http://api.lmiforall.org.uk/api/v1/wf/replacement_demand?soc=' + str(x))
-        print(res.text)
+        print('http://api.lmiforall.org.uk/api/v1/wf/replacement_demand?soc=' + str(x) +'&startYear=2017&endYear=2027')
+        res = requests.get('http://api.lmiforall.org.uk/api/v1/wf/replacement_demand?soc=' + str(x) +'&startYear=2017&endYear=2027')
         res = res.json()
+        print(res)
+        RepDemRCU_SocCode.append(res['soc'])
+        RepDemRCU_sYear.append(res['start_year'])
+        RepDemRCU_eYear.append(res['end_year'])
+        RepDemRCU_employment.append(res['rate'])
 
-        for x in range(len(res['predictedEmployment'])):
-            RepDemRCU_SocCode.append(res['soc'])
+    #2017 - 2022
+    for x in range(len(socCodeRead)):
+        x = socCodeRead.loc[x, 'SOC_CODE']
+        print('http://api.lmiforall.org.uk/api/v1/wf/replacement_demand?soc=' + str(x) +'&startYear=2017&endYear=2022')
+        res = requests.get('http://api.lmiforall.org.uk/api/v1/wf/replacement_demand?soc=' + str(x) +'&startYear=2017&endYear=2022')
+        res = res.json()
+        print(res)
+        RepDemRCU_SocCode.append(res['soc'])
+        RepDemRCU_sYear.append(res['start_year'])
+        RepDemRCU_eYear.append(res['end_year'])
+        RepDemRCU_employment.append(res['rate'])
 
-            RepDemRCU_sYear.append(res['predictedEmployment'][x]['start_year'])
+    # 2022 - 2027
+    for x in range(len(socCodeRead)):
+        x = socCodeRead.loc[x, 'SOC_CODE']
+        print('http://api.lmiforall.org.uk/api/v1/wf/replacement_demand?soc=' + str(x) + '&startYear=2022&endYear=2027')
+        res = requests.get(
+            'http://api.lmiforall.org.uk/api/v1/wf/replacement_demand?soc=' + str(x) + '&startYear=2022&endYear=2027')
+        res = res.json()
+        print(res)
+        RepDemRCU_SocCode.append(res['soc'])
+        RepDemRCU_sYear.append(res['start_year'])
+        RepDemRCU_eYear.append(res['end_year'])
+        RepDemRCU_employment.append(res['rate'])
 
-            RepDemRCU_eYear.append(res['predictedEmployment'][x]['end_year'])
+    df = pd.DataFrame(
+        {'Soc_Code': RepDemRCU_SocCode, 'Start_Year': RepDemRCU_sYear, 'End_Year': RepDemRCU_eYear,
+         'Rate': RepDemRCU_employment})
 
-            RepDemRCU_employment.append(res['predictedEmployment'][x]['rate'])
-
-            df = pd.DataFrame({'Soc_Code': RepDemRCU_SocCode,  'Start_Year': RepDemRCU_sYear, 'end_year': RepDemRCU_eYear, 'rate': RepDemRCU_employment})
-
-        df.to_excel('RepDemRCU.xlsx', sheet_name='RepDemRCU')
+    df.to_excel('RepDemRCU3Band.xlsx', sheet_name='All_Years')
 #------------------------------------------------------------------------------
 
 #-----------------------------------------------------
 # RUN CODE HERE ------- PICK WHAT DATA YOU NEED ------
 #-----------------------------------------------------
-RepDemRCU()
+RepDemRCU3Band()
 
